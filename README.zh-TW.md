@@ -35,20 +35,24 @@ cargo clippy
 cargo test
 ```
 
-## ⚙️ 快速設定
+## ⚙️ 設置說明
 
-設定採完全動態與相對路徑設計。若要在編輯器中透過 MCP 載入此服務，只需在設定檔中指向您的編譯產物：
+設定採用完全動態與相對路徑設計。若要在 OpenCode 中透過 MCP 載入此服務，只需在設定檔 `opencode.json` 中加入以下內容：
 
 ```json
+// opencode.json (OpenCode 設定檔)
 {
-  "mcpServers": {
-    "code-relay": {
-      "command": "code-relay-mcp",
-      "args": []
+  "mcp": {
+    "code-relay-mcp": {
+      "command": ["/路徑/到/code-relay-mcp"],
+      "enabled": true,
+      "type": "local"
     }
   }
 }
 ```
+
+使用其他 MCP 客户端（如 Cursor、Claude Desktop 等），請參閱各自官方文檔的 MCP 伺服器設定方式。
 
 ## 📐 架構設計與細節
 

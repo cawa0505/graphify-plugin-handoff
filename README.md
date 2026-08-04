@@ -1,5 +1,7 @@
 # CodeRelayMcp
 
+[繁體中文 (Traditional Chinese)](README.zh-TW.md)
+
 A native Rust-based Model Context Protocol (MCP) Server for the Opencode Code Relay subsystem. This server manages cross-session and cross-repository handoffs, serving as the lightweight, ultra-high-performance engine that completely replaces the old Node.js-based `@jimmyyen/opencode-code-relay-plugin` while maintaining 100% backward compatibility.
 
 The concept of Code Relay is inspired by and based on the original [code-relay](https://github.com/yan5xu/code-relay) project. We highly respect the original author's design and initiative. This repository evolves that concept into a stateful, high-performance MCP architecture for broader editor and agent ecosystems.
@@ -35,20 +37,24 @@ cargo clippy
 cargo test
 ```
 
-## Setup Instructions
+## Setup
 
-Configuration is fully dynamic and relative. To expose the server to your editor or agent via MCP:
+Configuration is fully dynamic and relative. To connect this server to OpenCode, add it to your `opencode.json` under the `"mcp"` key as a local server:
 
 ```json
+// opencode.json (OpenCode configuration file)
 {
-  "mcpServers": {
-    "code-relay": {
-      "command": "code-relay-mcp",
-      "args": []
+  "mcp": {
+    "code-relay-mcp": {
+      "command": ["/path/to/code-relay-mcp"],
+      "enabled": true,
+      "type": "local"
     }
   }
 }
 ```
+
+For other MCP clients (e.g. Cursor, Claude Desktop), consult their documentation for their native MCP server configuration format.
 
 ## Architecture Design
 
@@ -56,4 +62,4 @@ See detailed requirements, specifications, and architecture decisions in the `op
 
 ## License
 
-MIT / Apache 2.0
+MIT
