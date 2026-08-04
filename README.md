@@ -62,4 +62,4 @@ See detailed requirements, specifications, and architecture decisions in the `op
 
 ## License
 
-MIT / Apache 2.0
+MIT

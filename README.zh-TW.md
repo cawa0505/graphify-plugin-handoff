@@ -62,4 +62,4 @@ cargo test
 
 ## 📄 授權條款
 
-MIT / Apache 2.0
+MIT
