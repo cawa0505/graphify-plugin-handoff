@@ -1,5 +1,7 @@
 # CodeRelayMcp
 
+[English](README.md)
+
 基於 Rust 開發的 Model Context Protocol (MCP) 原生伺服器，專為 Opencode Code Relay 子系統設計。本專案負責管理跨 Session 與跨儲存庫（Repo）的狀態交接，作為極速、超輕量的高性能核心引擎，完整取代舊有基於 Node.js 的 `@jimmyyen/opencode-code-relay-plugin`，並保持 100% 向後相容。
 
 本專案之設計概念啟發自原創 [code-relay](https://github.com/yan5xu/code-relay) 專案。我們高度致敬並尊重原作者的絕佳創意，並將此概念升級至常駐型的極速 Rust MCP 架構，以無縫對接更廣大的編輯器與 AI Agent 生態系。
