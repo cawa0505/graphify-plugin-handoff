@@ -2,6 +2,8 @@
 
 A native Rust-based Model Context Protocol (MCP) Server for the Opencode Code Relay subsystem. This server manages cross-session and cross-repository handoffs, serving as the lightweight, ultra-high-performance engine that completely replaces the old Node.js-based `@jimmyyen/opencode-code-relay-plugin` while maintaining 100% backward compatibility.
 
+The concept of Code Relay is inspired by and based on the original [code-relay](https://github.com/yan5xu/code-relay) project. We highly respect the original author's design and initiative. This repository evolves that concept into a stateful, high-performance MCP architecture for broader editor and agent ecosystems.
+
 ## Key Features
 
 - **Single Binary & Ultra-high Performance**: Built in Rust with an expected binary size under 10MB and near-zero memory footprint.
