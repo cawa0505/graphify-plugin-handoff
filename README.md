@@ -15,7 +15,7 @@ A native Rust-based Model Context Protocol (MCP) Server for the Opencode Code Re
 ## Relationship with OpencodeCodeRelayPlugin
 
 This project serves as the core backend engine. For backward compatibility and seamless integration:
-- We provide a zero-dependency **Slim Wrapper** version of the Node.js [OpencodeCodeRelayPlugin](https://github.com/cawa0505/OpencodeCodeRelayPlugin).
+- We provide a zero-dependency **Slim Wrapper** version of the Node.js [OpencodeCodeRelayPlugin](https://github.com/cawa0505/opencode-code-relay-plugin).
 - When developers or CI/CD pipelines run `npx opencode-code-relay-plugin <command>`, the slim JS wrapper will transparently delegate the execution to this native Rust binary.
 - This ensures existing project workflows and AI prompts remain completely unchanged while gaining a 100x speedup in cold starts.
 
