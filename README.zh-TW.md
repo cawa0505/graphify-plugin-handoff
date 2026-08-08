@@ -1,27 +1,24 @@
-# CodeRelayMcp
+# graphify-plugin-handoff
 
 [English](README.md)
 
-基於 Rust 開發的 Model Context Protocol (MCP) 原生伺服器，專為 Opencode Code Relay 子系統設計。本專案負責管理跨 Session 與跨儲存庫（Repo）的狀態交接，作為極速、超輕量的高性能核心引擎，完整取代舊有基於 Node.js 的 `@jimmyyen/opencode-code-relay-plugin`，並保持 100% 向後相容。
+Graphify **內嵌型 plugin**：Code Relay 子系統的跨 Session、跨儲存庫（Repo）AI agent 狀態交接。以原生 Rust crate 實作 `GraphifyPlugin` trait，與 Graphify Core 直接整合。
 
-本專案之設計概念啟發自原創 [code-relay](https://github.com/yan5xu/code-relay) 專案。我們高度致敬並尊重原作者的絕佳創意，並將此概念升級至常駐型的極速 Rust MCP 架構，以無縫對接更廣大的編輯器與 AI Agent 生態系。
+本專案之設計概念啟發自原創 [code-relay](https://github.com/yan5xu/code-relay) 專案。我們高度致敬並尊重原作者的絕佳創意，並將此概念升級至常駐型的極速 Rust 內嵌 plugin 架構，融入 Graphify 生態系。
 
 ## 💡 核心特色
 
-- **單一執行檔與極致效能**：純 Rust 打造，編譯後體積預期小於 10MB，記憶體開銷微乎其微。
-- **記憶體常駐 Workspace 快取**：徹底解決舊版 Node.js 每次都要往上層目錄搜尋（walk-up disk search）導致的磁碟 I/O 延遲。本 MCP 伺服器在初始化時僅定位一次工作區根目錄並常駐於記憶體中，後續操作延遲低於 1ms。
+- **內嵌而非獨立伺服器**：以單一 Rust crate（`lib.rs`）提供，由 Graphify Core 在啟動時載入。無獨立 stdio JSON-RPC 進程、無需額外部署二進位。`relay*` 工具由 GraphifyMCP 在 Graphify 啟動時自動註冊。
+- **記憶體常駐 Workspace 快取**：徹底解決舊版 Node.js 每次都要往上層目錄搜尋（walk-up disk search）導致的磁碟 I/O 延遲。工作區根目錄僅在 `GraphifyPlugin::bind`（透過注入的 `WorkspaceContext`）時定位一次並常駐於記憶體中，後續操作延遲低於 1ms。
 - **雙軌混合記憶機制**：
   - **短期記憶 (Short-Term)**：採用對 Token 極度友善的 TOON (Token-Oriented Object Notation) 格式，儲存於 `.relay/relay.toon`，提供高速且精確的狀態交接。
   - **長期記憶 (Long-Term)**：整合 Qdrant 向量資料庫進行語意 RAG 檢索，可跨 Session 模糊搜尋過往的重大決策與技術脈絡。
-- **標準 MCP 協定**：基於 Stdio 標準輸入輸出的 JSON-RPC 傳輸協定，相容於任何支援 MCP 的客戶端（如 OpenCode, Cursor, Claude Desktop, Roo Code）。
-- **安全原子寫入**：寫入狀態時，採用「寫入臨時檔 + OS rename」的原子寫入機制，並結合 `fs2` 進行跨行程排他鎖定，防止並行寫入造成檔案毀損。
+- **與 plugin 生態對齊**：各 plugin（handoff, review, opendoc…）以 Graphify 注入的 `workspace_uuid` 對齊 — 各自不 walk-up、不分歧 root 定位。
+- **安全原子寫入**：寫入狀態時，採用「寫入臨時檔 + OS rename」的原子寫入機制，並結合 `fs2` 進行跨進程排他鎖定，防止並行寫入造成檔案毀損。
 
 ## 🤝 與 OpencodeCodeRelayPlugin 的相容關係
 
-本專案作為底層的效能核心。為了實現無痛對接與向後相容：
-- 我們同步提供一個 0 依賴的 **Slim Wrapper 版本** 的 Node.js 插件：[OpencodeCodeRelayPlugin](https://github.com/cawa0505/opencode-code-relay-plugin)。
-- 當開發者或 CI/CD 腳本在工作區執行 `npx opencode-code-relay-plugin <command>` 時，該 Slim 插件只會作為輕量轉發層，透明地（Transparently）將命令拉起並轉交給 Rust 執行檔。
-- 這能讓現有的工作流、AI Agent 指引在**不更改任何程式碼與設定**的情況下，直接獲得 100 倍以上的冷啟動效能提升。
+本 crate 是舊版 Node.js plugin 的 Rust 原生演化。向後相容（`npx opencode-code-relay-plugin <command>` 流程）為 **[待討論]** — 見 `openspec/changes/rust-mcp-migration/tasks.md`。
 
 ## 🛠️ 開發與驗證命令
 
@@ -39,26 +36,11 @@ cargo test
 
 ## ⚙️ 設置說明
 
-設定採用完全動態與相對路徑設計。若要在 OpenCode 中透過 MCP 載入此服務，只需在設定檔 `opencode.json` 中加入以下內容：
-
-```json
-// opencode.json (OpenCode 設定檔)
-{
-  "mcp": {
-    "code-relay-mcp": {
-      "command": ["/路徑/到/code-relay-mcp"],
-      "enabled": true,
-      "type": "local"
-    }
-  }
-}
-```
-
-使用其他 MCP 客户端（如 Cursor、Claude Desktop 等），請參閱各自官方文檔的 MCP 伺服器設定方式。
+無需獨立伺服器設定。Graphify Core 依賴此 crate 並在啟動時載入為 plugin，GraphifyMCP 自動註冊 `relay*` 工具。設定採用完全動態與相對路徑設計 — 無環境層級機密、無硬編碼路徑。
 
 ## 📐 架構設計與細節
 
-更詳細的需求書、系統設計以及 OpenSpec 規範文件，請參閱本專案的 `openspec/` 目錄。
+更詳細的需求書、系統設計以及 OpenSpec 規範文件，請參閱本專案的 `openspec/` 目錄。Graphify plugin 契約（`GraphifyPlugin` trait、`WorkspaceContext`）由 Graphify Core 定義，並與 GraphifyRust 專案協調。
 
 ## 📄 授權條款
 
