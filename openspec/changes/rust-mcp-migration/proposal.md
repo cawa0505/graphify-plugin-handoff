@@ -10,7 +10,7 @@
 2. 導入 **Graphify Plugin Trait Contract**：
    - `get_id(&self) -> &str`
    - `bind(&mut self, ctx: &WorkspaceContext)`
-   - `get_workspace_uuid(&self) -> &str`
+   - `get_workspace_key(&self) -> &str`
    - `sync_toon(&mut self, prev_toon) -> Vec<u8>`
    - `perform_handoff(&self) -> Result<(), Box<dyn Error>>`
 3. 維持 **長駐型 Workspace Root 快取機制**（透過 Graphify 注入的 `WorkspaceContext`），僅在啟動時執行一次磁碟定位；具名 repo 操作改走 `repos[name].path` registry 查表；後續請求完全在記憶體中（Stateful Memory Cache）直接響應。

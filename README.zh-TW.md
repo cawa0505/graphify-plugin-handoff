@@ -13,7 +13,7 @@ Graphify **內嵌型 plugin**：Code Relay 子系統的跨 Session、跨儲存�
 - **雙軌混合記憶機制**：
   - **短期記憶 (Short-Term)**：採用對 Token 極度友善的 TOON (Token-Oriented Object Notation) 格式，儲存於 `.relay/relay.toon`，提供高速且精確的狀態交接。
   - **長期記憶 (Long-Term)**：整合 Qdrant 向量資料庫進行語意 RAG 檢索，可跨 Session 模糊搜尋過往的重大決策與技術脈絡。
-- **與 plugin 生態對齊**：各 plugin（handoff, review, opendoc…）以 Graphify 注入的 `workspace_uuid` 對齊 — 各自不 walk-up、不分歧 root 定位。
+- **與 plugin 生態對齊**：各 plugin（handoff, review, opendoc…）以 Graphify 注入的 `workspace_key` 對齊（graphify-core v1 契約）— 各自不 walk-up、不分歧 root 定位。
 - **安全原子寫入**：寫入狀態時，採用「寫入臨時檔 + OS rename」的原子寫入機制，並結合 `fs2` 進行跨進程排他鎖定，防止並行寫入造成檔案毀損。
 
 ## 🤝 與 OpencodeCodeRelayPlugin 的相容關係

@@ -33,7 +33,7 @@
 - [ ] 效能目標：記憶體快取路徑 < 1ms
 
 ### Task 6: 整合與驗證 (INTEGRATION.md)
-- [ ] 與 `opendoc-mcp`：確認 `workspace_uuid` 作為 RAG 過濾鍵
+- [ ] 與 `opendoc-mcp`：確認 `workspace_key`（plugin 對齊鍵）與 OpenDocuments 端 `doc_meta.workspace_uuid` RAG 過濾欄位的對映規則
 - [ ] 與 `graphify`：確認 `.toon` 在 graph 節點間的傳遞
 - [ ] 整合測試：在 GraphifyRust workspace 加入此 crate，驗證 `graphify-mcp` 自動註冊 relay tools
 

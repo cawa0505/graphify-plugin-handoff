@@ -2,7 +2,7 @@
 
 ### Requirement: Workspace Context Injection (Single Walk-up by Graphify)
 plugin MUST 取得 workspace 根路径與 repo 注册表，*唯* 透過 `GraphifyPlugin::bind` 注入的 `WorkspaceContext`：
-- `workspace_uuid`：跨 session 揮發的唯一鑑別碼
+- `workspace_key`：跨 session 揮發的唯一鑑別碼
 - `repo_paths: HashMap<String, PathBuf>`：repo_name → repo_root
 - `primary_repo: Option<String>`：當前活躍 repo
 

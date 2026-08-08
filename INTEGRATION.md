@@ -7,7 +7,7 @@ This document describes **optional coordination strategies** between Code Relay 
 - **`opendoc-mcp`**: Document RAG and knowledge retrieval over specs, research PDFs, and web sources.
 - **`graphify`**: Structural code graph traversals (callers, dependencies, component maps).
 
-**Core philosophy**: Code Relay stays focused on **session state handover** (`relay.json`, `RESUME.md`, `next_step.md`). Context enrichment is **optional** and **explicit**, not automatic or default. The slim skill (`RELAY_SKILL.md`) is the sole client surface; agents can interleave other MCP tools manually when richer search or code awareness is needed. Cross-plugin alignment (including `graphify-plugin-opendoc`) is keyed by the `workspace_uuid` injected by Graphify.
+**Core philosophy**: Code Relay stays focused on **session state handover** (`relay.json`, `RESUME.md`, `next_step.md`). Context enrichment is **optional** and **explicit**, not automatic or default. The slim skill (`RELAY_SKILL.md`) is the sole client surface; agents can interleave other MCP tools manually when richer search or code awareness is needed. Cross-plugin alignment (including `graphify-plugin-opendoc`) is keyed by the `workspace_key` injected by Graphify (graphify-core v1 contract).
 
 ## 2. Use cases
 

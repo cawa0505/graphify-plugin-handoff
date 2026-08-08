@@ -13,7 +13,7 @@ The concept of Code Relay is inspired by and based on the original [code-relay](
 - **Hybrid Double-track Memory**:
   - **Short-Term Memory**: Fast, deterministic state handoff using the token-efficient TOON (Token-Oriented Object Notation) format in `.relay/relay.toon`.
   - **Long-Term Memory**: Semantic vector search utilizing Qdrant for RAG-assisted retrieval of historical session decisions.
-- **Workspace-aligned with the plugin ecosystem**: Plugins (handoff, review, opendoc, …) are aligned by `workspace_uuid` injected by Graphify — no per-plugin walk-up, no divergent root discovery.
+- **Workspace-aligned with the plugin ecosystem**: Plugins (handoff, review, opendoc, …) are aligned by `workspace_key` injected by Graphify (graphify-core v1 contract) — no per-plugin walk-up, no divergent root discovery.
 - **Safe & Atomic Operations**: Implements transactional file-writing using temp-swapping (via `fs2` locks) to prevent state corruption across concurrent sessions.
 
 ## Relationship with OpencodeCodeRelayPlugin

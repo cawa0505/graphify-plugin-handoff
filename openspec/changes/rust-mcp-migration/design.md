@@ -6,8 +6,8 @@
 - **無獨立 MCP Server**：不透過 stdio JSON-RPC 與 AI client 直接溝通。
 - **Plugin 介面契約**：實作 `graphify-core` 定義的 `GraphifyPlugin` trait。
   - `get_id(&self) -> &str`：唯一標識插件
-  - `bind(&mut self, ctx: &WorkspaceContext)`：由 Graphify 注入 workspace_uuid + repo_paths
-  - `get_workspace_uuid(&self) -> &str`：傳回當前 workspace 識別碼
+  - `bind(&mut self, ctx: &WorkspaceContext)`：由 Graphify 注入 workspace_key + repo_paths
+  - `get_workspace_key(&self) -> &str`：傳回當前 workspace 識別碼（v1 契約定義）
   - `sync_toon(&mut self, prev_toon) -> Vec<u8>`：TOON 序列化/反序列化
   - `perform_handoff(&self)`：觸發主流程（保存、關閉、切換）
 
@@ -15,7 +15,7 @@
 
 - **解析規則**：完全由 Graphify 的 `WorkspaceIdentityManager` 決定。
 - plugin 只需從 `WorkspaceContext` 取得：
-  - `workspace_uuid`：跨 session 換裝的唯一鑑別碼
+  - `workspace_key`：跨 session 換裝的唯一鑑別碼（graphify-core v1 `WorkspaceContext.workspace_key`，SipHash hex）
   - `repo_paths: HashMap<String, PathBuf>`：repo_name → repo_root
   - `primary_repo: Option<String>`：當前目標 repo
 - **Fail-fast**：若 `repo` 不存在於 `repo_paths` → 立即回傳 `RepoNotFound` 錯誤。
@@ -42,7 +42,7 @@ confidence           # 0.0~1.0，表示狀態完整度
 
 - **GraphifyMCP 自動註冊**：Graphify の `graphify-mcp` 服務啟動時，掃描依賴於 `graphify-plugin-handoff` 的 crate，根據其公開函式自動產生對應的 MCP tools：
   - `relayInit`、`relaySave`、`relayResume`、`relayStatus`、`relaySwitch`、`relayAdd`、`relayClose`
-- **跨 Plugin 間協作**：透過 `workspace_uuid` 將此 plugin 的 relay state 與 `graphify-plugin-opendoc`、`graphify-plugin-review` 等串連。
+- **跨 Plugin 間協作**：透過 `workspace_key` 將此 plugin 的 relay state 與 `graphify-plugin-opendoc`、`graphify-plugin-review` 等串連。
 - **檔案位置**：plugin 僅負責邏輯；檔案讀寫與鎖機制在此 crate 內完成，GraphifyCore 不依賴此 crate 的檔案 I/O。
 
 ## 6. 依賴清單
