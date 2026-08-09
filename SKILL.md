@@ -204,8 +204,8 @@ MCP path: the same cycle through `graphify_relayInit` → `relaySave` → `relay
 |---|---|
 | opencode | `~/.config/opencode/skills/graphify-relay/SKILL.md` |
 | Claude | `~/.claude/skills/graphify-relay/SKILL.md` |
-| Cursor | `.cursor/rules/graphify-relay.mdc` (pointer) |
-| Cline | `.clinerules` (pointer) |
+| Cursor | `.cursor/rules/graphify-relay.mdc` (managed copy) |
+| Cline | `.clinerules` (managed copy) |
 | Project | `.opencode/skills/graphify-relay/SKILL.md` (cwd) |
 
 In-repo (this repository): Claude Code auto-discovers the repo-root `SKILL.md`; opencode loads it via the project or global install above.
