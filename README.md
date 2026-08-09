@@ -9,6 +9,7 @@ The concept of Code Relay is inspired by and based on the original [code-relay](
 ## Key Features
 
 - **Embedded, not a separate server**: Ships as a single Rust crate (`lib.rs`) that Graphify Core embeds and loads at startup. No stdio JSON-RPC process, no extra binary to deploy. The `relay*` tools are auto-registered by GraphifyMCP when Graphify starts.
+- **Dual-track client surface**: The same 7 relay operations work through MCP tools (`graphify_relay*`, efficiency layer) **and** the `graphify handoff ...` CLI (resilience layer) — if MCP is unavailable, the CLI and direct state files keep the handoff fully usable. A self-installing agent skill (`SKILL.md`) ships with the crate: `graphify handoff skill install` registers it for opencode / Claude / Cursor / Cline.
 - **Stateful Memory Caching**: Eliminates the slow walk-up disk search penalty from the legacy Node.js implementation. The workspace root is resolved exactly once during `GraphifyPlugin::bind` (via the injected `WorkspaceContext`) and cached in memory. Subsequent operations complete under 1ms.
 - **Hybrid Double-track Memory**:
   - **Short-Term Memory**: Fast, deterministic state handoff using the token-efficient TOON (Token-Oriented Object Notation) format in `.relay/relay.toon`.

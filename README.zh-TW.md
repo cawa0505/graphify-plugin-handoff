@@ -9,6 +9,7 @@ Graphify **內嵌型 plugin**：Code Relay 子系統的跨 Session、跨儲存�
 ## 💡 核心特色
 
 - **內嵌而非獨立伺服器**：以單一 Rust crate（`lib.rs`）提供，由 Graphify Core 在啟動時載入。無獨立 stdio JSON-RPC 進程、無需額外部署二進位。`relay*` 工具由 GraphifyMCP 在 Graphify 啟動時自動註冊。
+- **雙軌客戶端介面**：同一套 7 個 relay 操作同時支援 MCP 工具（`graphify_relay*`，效率層）與 `graphify handoff ...` CLI（韌性層）— 即使 MCP 不可用，CLI 與直接讀取狀態檔仍可完整接力。crate 內附可自助安裝的 agent skill（`SKILL.md`）：`graphify handoff skill install` 可註冊至 opencode / Claude / Cursor / Cline。
 - **記憶體常駐 Workspace 快取**：徹底解決舊版 Node.js 每次都要往上層目錄搜尋（walk-up disk search）導致的磁碟 I/O 延遲。工作區根目錄僅在 `GraphifyPlugin::bind`（透過注入的 `WorkspaceContext`）時定位一次並常駐於記憶體中，後續操作延遲低於 1ms。
 - **雙軌混合記憶機制**：
   - **短期記憶 (Short-Term)**：採用對 Token 極度友善的 TOON (Token-Oriented Object Notation) 格式，儲存於 `.relay/relay.toon`，提供高速且精確的狀態交接。

@@ -12,6 +12,7 @@
 
 pub mod handoff;
 pub mod relay;
+pub mod skill_install;
 pub mod root;
 pub mod state;
 pub mod sync;
