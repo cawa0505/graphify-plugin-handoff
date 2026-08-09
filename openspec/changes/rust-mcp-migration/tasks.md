@@ -7,24 +7,26 @@
 ## Roadmap
 
 ### Task 1: 同步 Graphify Plugin Trait 與 crate 結構
-- [ ] 等待 GraphifyRust 完成 `graphify-core/src/plugin.rs` 中的 `GraphifyPlugin` trait 定義
-- [ ] 更新 `openspec/design.md`：揭露 Plugin 介設計，強調「Embedded Crate」模式
-- [ ] 更新 `openspec/proposal.md`：描述 Plugin SDK，與 GraphifyMCP 工具註冊機制
+- [x] 等待 GraphifyRust 完成 `graphify-core/src/plugin.rs` 中的 `GraphifyPlugin` trait 定義 → **已完成**（v1 trait + reference 測試 + `PluginHost` 廣播機制已 shipped）
+- [x] 更新 `openspec/design.md`：揭露 Plugin 介設計，強調「Embedded Crate」模式 → **已完成**（修正 bind by value、移除 repo_paths/perform_handoff、補 sync-toon 封包契約）
+- [x] 更新 `openspec/proposal.md`：描述 Plugin SDK，與 GraphifyMCP 工具註冊機制 → **已完成**
 - [ ] 於 `graphify-plugin-handoff` 建立 `src/lib.rs`，實作 `GraphifyPlugin` trait
 - [ ] `Cargo.toml`：`[lib]` 為主，optional `[[bin]]` 僅供本地測試
-- [ ] 依賴：`serde`、`thiserror`、`fs2`（檔案鎖）、`graphify-core`（trait 來源，path/git dep）
+- [ ] 依賴：`serde`、`serde_json`、`thiserror`、`fs2`、`sha1`、`chrono`、`graphify-core`（path dep `../../GraphifyRust/graphify-core`）
 
 ### Task 2: TOON 狀態模型與 Workspace Root 解析
-- [ ] `src/state.rs`：`RelayState` (session_id, phase, volatile, open_threads, specs_hash, confidence)
-- [ ] `src/workspace.rs`：單次 walk-up 找 `.graphify-workspace`，快取到記憶體 `HashMap<String, PathBuf>`
+- [ ] `src/state.rs`：`RelayState`（relay.json schema 1.0.0：project_context / active_baton / repos / state_snapshot / spec_sync / updated_at）+ `.relay/relay.toon` TOON 鏡像（短程記憶格式）
+- [ ] `src/workspace.rs`：`bind` 時以 `ctx.root_path` 一次定位 relay root 並常駐快取；`relayInit` 為唯一寫入式 walk-up（向上找 `relay.json`）；具名 repo 走 `repos[name].path` registry 查表，零 walk-up
 
 ### Task 3: relay* 核心邏輯（供 graphify-mcp 呼叫）
-- [ ] `src/relay.rs`：`save`, `resume`, `status`, `switch`, `add`, `close`, `init`
+- [ ] `src/relay.rs`：`save`, `resume`, `status`, `switch`, `add`, `close`, `init`（回傳語意依 PROTOCOL.md 凍結文字）
+- [ ] `src/sync.rs`：`sync_toon` 封包 — metadata MUST `format_version: "1.0.0"` + `workspace_key`；relay 狀態放 `metadata.plugin_data.<plugin_id>`；錯誤以 `error` metadata 回傳、不得 panic
+- [ ] `on_graph_updated`：將 `modified_nodes` 併入 active session 節點（依 §4.2 active nodes 追蹤）
 - [ ] 使用 `fs2::FileExt::lock_exclusive` + temp-write + rename
 
 ### Task 4: 測試與驗證
-- [ ] `cargo test`：狀態讀寫、workspace 解析、檔案鎖併發
-- [ ] 整合測試：在 GraphifyRust workspace 加入此 crate，驗證 `graphify-mcp` 能自動註冊 relay tools
+- [ ] `cargo test`：狀態讀寫、workspace 解析、檔案鎖併發、sync_toon 封包合規（MUST metadata、error 路徑、MAJOR 不符拒絕）
+- [ ] 整合測試（GraphifyRust 側）：在 GraphifyRust workspace 加入此 crate，驗證 `graphify-mcp` 能自動註冊 relay tools → 屬 GraphifyRust 整合範圍（#3124），此 repo 僅確保公開 API 穩定
 
 ### Task 5: 效能驗證 (Performance Benchmark)
 - [ ] 使用 `criterion` 或 `std::time::Instant` 量測：
@@ -35,7 +37,7 @@
 ### Task 6: 整合與驗證 (INTEGRATION.md)
 - [ ] 與 `opendoc-mcp`：確認 `workspace_key`（plugin 對齊鍵）與 OpenDocuments 端 `doc_meta.workspace_uuid` RAG 過濾欄位的對映規則
 - [ ] 與 `graphify`：確認 `.toon` 在 graph 節點間的傳遞
-- [ ] 整合測試：在 GraphifyRust workspace 加入此 crate，驗證 `graphify-mcp` 自動註冊 relay tools
+- [ ] 整合測試（GraphifyRust 側）：加入此 crate，驗證 `graphify-mcp` 自動註冊 relay tools → 屬 GraphifyRust 整合範圍
 
 ### Task 7: 雙端 README 互聯與 Parity 驗證
 - [ ] 更新 `README.md` 及 `README.zh-TW.md`，預告內嵌 plugin 定位

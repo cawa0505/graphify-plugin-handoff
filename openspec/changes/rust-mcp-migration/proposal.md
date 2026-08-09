@@ -7,12 +7,13 @@
 
 ## What Changes
 1. 將核心功能重構為 **Graphify 內嵌型 crate**（`graphify-plugin-handoff` lib.rs），擺脫 Node.js / node_modules，同時避免額外 MCP 伺服器開銷。
-2. 導入 **Graphify Plugin Trait Contract**：
+2. 導入 **Graphify Plugin Trait Contract**（v1，`graphify-core/src/plugin.rs`，已定案）：
    - `get_id(&self) -> &str`
-   - `bind(&mut self, ctx: &WorkspaceContext)`
+   - `bind(&mut self, ctx: WorkspaceContext)`（by value；`WorkspaceContext { workspace_key, workspace_name, root_path, timestamp }`）
    - `get_workspace_key(&self) -> &str`
-   - `sync_toon(&mut self, prev_toon) -> Vec<u8>`
-   - `perform_handoff(&self) -> Result<(), Box<dyn Error>>`
+   - `sync_toon(&mut self, opt_toon: Option<Vec<u8>>) -> Vec<u8>`（.toon 封包交換，sync-toon-packet 規格）
+   - `on_graph_updated(&mut self, event: &GraphUpdateEvent)`（預設 no-op）
+   - relay* 操作（init/save/close/switch/resume/status/add）以 crate 公開 API 函式提供，非 trait 方法。
 3. 維持 **長駐型 Workspace Root 快取機制**（透過 Graphify 注入的 `WorkspaceContext`），僅在啟動時執行一次磁碟定位；具名 repo 操作改走 `repos[name].path` registry 查表；後續請求完全在記憶體中（Stateful Memory Cache）直接響應。
 4. 更新 **Slim Code-Relay Skill**（單一 `SKILL.md`）：
    - 開場：呼叫 `relayResume` 讀取 active repo 交接
